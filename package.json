@@ -1,0 +1,40 @@
+{
+  "name": "tomato-focus",
+  "version": "1.0.0",
+  "description": "White glass desktop pomodoro timer.",
+  "author": "Tomato Focus",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable",
+    "dist": "electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "com.tomato.focus",
+    "productName": "Tomato Focus",
+    "files": [
+      "index.html",
+      "styles.css",
+      "app.js",
+      "electron/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        "portable",
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8"
+  }
+}

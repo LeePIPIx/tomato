@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tomato Focus</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="focus-card">
+        <header class="app-header">
+          <div class="brand">
+            <div class="brand-mark">TF</div>
+            <div>
+              <p class="eyebrow">Tomato Focus</p>
+              <h1>专注计时</h1>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button id="historyBtn" class="text-button" type="button">历史记录</button>
+            <button id="desktopMiniBtn" class="text-button desktop-only" type="button">置顶小窗</button>
+            <button id="focusNowBtn" class="icon-button" type="button" title="切换沉浸专注" aria-label="切换沉浸专注">◎</button>
+            <button id="settingsBtn" class="icon-button" type="button" title="设置" aria-label="设置">⚙</button>
+          </div>
+        </header>
+
+        <nav class="mode-tabs" aria-label="计时模式">
+          <button class="mode-tab active" data-mode="focus" type="button">专注</button>
+          <button class="mode-tab" data-mode="short" type="button">短休息</button>
+          <button class="mode-tab" data-mode="long" type="button">长休息</button>
+        </nav>
+
+        <section class="timer-stage" aria-live="polite">
+          <div class="orbital">
+            <svg class="timer-ring" viewBox="0 0 420 420" role="img" aria-label="倒计时进度">
+              <defs>
+                <linearGradient id="ringGradient" x1="0%" x2="100%" y1="0%" y2="100%">
+                  <stop offset="0%" stop-color="#ef5f57" />
+                  <stop offset="100%" stop-color="#f6b35d" />
+                </linearGradient>
+              </defs>
+              <circle class="ring-base" cx="210" cy="210" r="182"></circle>
+              <circle id="ringProgress" class="ring-progress" cx="210" cy="210" r="182"></circle>
+            </svg>
+            <div class="time-core">
+              <p id="modeLabel" class="mode-label">专注时间</p>
+              <div id="timeDisplay" class="time-display">25:00</div>
+              <p id="cycleLabel" class="cycle-label">第 1 轮 · 距离长休还有 4 个番茄</p>
+            </div>
+          </div>
+
+          <div class="timer-actions">
+            <button id="resetBtn" class="ghost-button" type="button" title="重置" aria-label="重置">↺</button>
+            <button id="startPauseBtn" class="primary-button" type="button">开始专注</button>
+            <button id="skipBtn" class="ghost-button" type="button" title="跳过" aria-label="跳过">→</button>
+          </div>
+        </section>
+
+        <section class="summary-strip" aria-label="今日专注概览">
+          <div>
+            <span>今日</span>
+            <strong class="goal-count"><span id="todayCompleted">0</span><span class="goal-separator">/</span><span id="dailyGoalInline">8</span></strong>
+          </div>
+          <div>
+            <span>专注</span>
+            <strong id="focusedMinutes">0m</strong>
+          </div>
+          <div>
+            <span>任务</span>
+            <strong id="doneTasks">0</strong>
+          </div>
+          <div>
+            <span>连续</span>
+            <strong id="streakCount">0</strong>
+          </div>
+        </section>
+
+        <div class="progress-row">
+          <span id="goalText">目标 8 个番茄</span>
+          <span id="goalPercent">0%</span>
+          <div class="progress-track">
+            <div id="goalProgress" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <section class="task-area">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">当前任务</p>
+              <h2 id="activeTaskName">未选择任务</h2>
+            </div>
+            <button id="clearDoneBtn" class="text-button" type="button">清理完成</button>
+          </div>
+
+          <form id="taskForm" class="task-form">
+            <input id="taskInput" type="text" maxlength="60" placeholder="添加一个要完成的任务" autocomplete="off" />
+            <button type="submit" class="add-button" title="添加任务" aria-label="添加任务">+</button>
+          </form>
+
+          <div id="taskList" class="task-list"></div>
+        </section>
+
+        <section class="focus-options">
+          <label class="switch-row">
+            <span>提示音</span>
+            <input id="soundToggle" type="checkbox" checked />
+          </label>
+          <label class="switch-row">
+            <span>桌面通知</span>
+            <input id="notifyToggle" type="checkbox" />
+          </label>
+        </section>
+
+        <section class="note-area">
+          <div class="section-head">
+            <span>专注备注</span>
+            <button id="saveNoteBtn" class="text-button" type="button">保存</button>
+          </div>
+          <textarea id="focusNote" placeholder="记录这一轮专注要避开的干扰或完成标准"></textarea>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="historyDialog" class="app-dialog">
+      <form method="dialog" class="dialog-card history-card">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">Focus History</p>
+            <h2>历史专注记录</h2>
+          </div>
+          <button class="icon-button" value="close" title="关闭" aria-label="关闭">×</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+        <div class="dialog-actions">
+          <button id="clearHistoryBtn" type="button" class="text-button danger">清空历史</button>
+          <button value="close" class="primary-button">完成</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="settingsDialog" class="app-dialog">
+      <form method="dialog" class="dialog-card">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">Timer Settings</p>
+            <h2>设置</h2>
+          </div>
+          <button class="icon-button" value="close" title="关闭" aria-label="关闭">×</button>
+        </div>
+
+        <div class="settings-grid">
+          <label>
+            专注分钟
+            <input id="focusMinutes" type="number" min="1" max="180" />
+          </label>
+          <label>
+            短休分钟
+            <input id="shortMinutes" type="number" min="1" max="60" />
+          </label>
+          <label>
+            长休分钟
+            <input id="longMinutes" type="number" min="1" max="120" />
+          </label>
+          <label>
+            长休间隔
+            <input id="longEvery" type="number" min="1" max="12" />
+          </label>
+          <label>
+            今日目标
+            <input id="dailyGoal" type="number" min="1" max="30" />
+          </label>
+          <label>
+            自动开始下一轮
+            <select id="autoStart">
+              <option value="off">关闭</option>
+              <option value="breaks">只自动休息</option>
+              <option value="all">全部自动</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="dialog-actions">
+          <button id="restoreBtn" type="button" class="ghost-button">恢复默认</button>
+          <button id="saveSettingsBtn" value="default" class="primary-button">保存设置</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
