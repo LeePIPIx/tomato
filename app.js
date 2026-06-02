@@ -276,6 +276,10 @@ function renderTimer() {
   const progress = total === 0 ? 0 : 1 - remaining / total;
   elements.ringProgress.style.strokeDashoffset = RING_LENGTH * (1 - progress);
   document.title = `${formatTime(remaining)} · ${MODE_COPY[mode].label}`;
+  window.tomatoDesktop?.updateTimer({
+    time: formatTime(remaining),
+    label: MODE_COPY[mode].label
+  });
 }
 
 function renderModes() {
