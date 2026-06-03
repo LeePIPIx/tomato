@@ -41,6 +41,8 @@ const elements = {
   todayCompleted: $("#todayCompleted"),
   dailyGoalInline: $("#dailyGoalInline"),
   goalText: $("#goalText"),
+  goalMinusBtn: $("#goalMinusBtn"),
+  goalPlusBtn: $("#goalPlusBtn"),
   goalPercent: $("#goalPercent"),
   goalProgress: $("#goalProgress"),
   focusedMinutes: $("#focusedMinutes"),
@@ -300,6 +302,13 @@ function renderStats() {
   elements.streakCount.textContent = state.streak;
 }
 
+function setDailyGoal(goal) {
+  state.settings.dailyGoal = Math.min(30, Math.max(1, Math.round(Number(goal) || DEFAULT_SETTINGS.dailyGoal)));
+  saveState();
+  renderStats();
+  renderSettings();
+}
+
 function renderTasks() {
   const task = activeTask();
   elements.activeTaskName.textContent = task ? task.title : "未选择任务";
@@ -452,6 +461,14 @@ elements.clearHistoryBtn.addEventListener("click", () => {
   renderHistory();
 });
 
+elements.goalMinusBtn.addEventListener("click", () => {
+  setDailyGoal(state.settings.dailyGoal - 1);
+});
+
+elements.goalPlusBtn.addEventListener("click", () => {
+  setDailyGoal(state.settings.dailyGoal + 1);
+});
+
 elements.focusNowBtn.addEventListener("click", () => {
   document.body.classList.toggle("focus-ambience");
   elements.focusNowBtn.setAttribute("aria-pressed", document.body.classList.contains("focus-ambience").toString());
@@ -459,6 +476,12 @@ elements.focusNowBtn.addEventListener("click", () => {
 
 if (window.tomatoDesktop) {
   document.body.classList.add("desktop-app");
+  $$("[data-window-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      window.tomatoDesktop.windowAction(button.dataset.windowAction);
+    });
+  });
+
   elements.desktopMiniBtn.addEventListener("click", () => {
     window.tomatoDesktop.minimizeToTop();
   });
@@ -470,7 +493,7 @@ if (window.tomatoDesktop) {
 
   document.addEventListener("dblclick", () => {
     if (document.body.classList.contains("desktop-mini")) {
-      window.tomatoDesktop.minimizeToTop();
+      window.tomatoDesktop.restoreFromMini();
     }
   });
 } else {
@@ -484,7 +507,7 @@ elements.saveSettingsBtn.addEventListener("click", () => {
     shortMinutes: Number($("#shortMinutes").value),
     longMinutes: Number($("#longMinutes").value),
     longEvery: Number($("#longEvery").value),
-    dailyGoal: Number($("#dailyGoal").value),
+    dailyGoal: Math.min(30, Math.max(1, Math.round(Number($("#dailyGoal").value) || DEFAULT_SETTINGS.dailyGoal))),
     autoStart: $("#autoStart").value
   };
   setMode(mode);

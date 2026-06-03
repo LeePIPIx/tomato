@@ -38,6 +38,120 @@ body {
   overflow-x: hidden;
 }
 
+.window-titlebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 20;
+  display: none;
+  grid-template-columns: 1fr auto;
+  height: 42px;
+  color: rgba(32, 33, 38, 0.68);
+  background: rgba(255, 255, 255, 0.28);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(18px) saturate(1.08);
+  user-select: none;
+  -webkit-app-region: drag;
+}
+
+.desktop-app .window-titlebar {
+  display: grid;
+}
+
+.window-drag-region {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding-left: 13px;
+}
+
+.window-app-mark {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  color: #fffaf2;
+  background: #202126;
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.window-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.window-controls {
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+
+.window-control {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: rgba(32, 33, 38, 0.78);
+  background: transparent;
+  line-height: 1;
+}
+
+.window-control::before,
+.window-control::after {
+  content: "";
+  position: absolute;
+  display: block;
+}
+
+.window-control.minimize::before {
+  width: 14px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.window-control.maximize::before {
+  width: 13px;
+  height: 13px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+}
+
+.window-control.close::before,
+.window-control.close::after {
+  width: 16px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.window-control.close::before {
+  transform: rotate(45deg);
+}
+
+.window-control.close::after {
+  transform: rotate(-45deg);
+}
+
+.window-control:hover {
+  background: rgba(255, 255, 255, 0.54);
+}
+
+.window-control.close:hover {
+  color: #fff;
+  background: #d94b43;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -75,6 +189,10 @@ select:focus-visible {
   place-items: center;
   min-height: 100vh;
   padding: 28px;
+}
+
+.desktop-app .app-shell {
+  padding-top: 64px;
 }
 
 .focus-card {
@@ -378,6 +496,39 @@ h2 {
   margin: 14px auto 0;
   color: var(--muted);
   font-size: 13px;
+}
+
+.goal-editor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.goal-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.goal-stepper button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.62);
+  font-size: 17px;
+  font-weight: 760;
+  line-height: 1;
+}
+
+.goal-stepper button:hover {
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.84);
 }
 
 .progress-track {
@@ -706,6 +857,10 @@ textarea {
 .desktop-mini .app-shell {
   min-height: 100vh;
   padding: 0;
+}
+
+.desktop-mini .window-titlebar {
+  display: none;
 }
 
 .desktop-mini .focus-card {

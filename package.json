@@ -16,12 +16,14 @@
       "index.html",
       "styles.css",
       "app.js",
-      "electron/**/*"
+      "electron/**/*",
+      "build/icon.ico"
     ],
     "directories": {
       "output": "dist"
     },
     "win": {
+      "icon": "build/icon.ico",
       "signAndEditExecutable": false,
       "target": [
         "portable",

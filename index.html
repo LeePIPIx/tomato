@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <header class="window-titlebar">
+      <div class="window-drag-region">
+        <div class="window-app-mark" aria-hidden="true">TF</div>
+        <span class="window-title">Tomato Focus</span>
+      </div>
+      <div class="window-controls">
+        <button class="window-control minimize" data-window-action="minimize" type="button" title="Minimize" aria-label="Minimize"></button>
+        <button class="window-control maximize" data-window-action="maximize" type="button" title="Maximize" aria-label="Maximize"></button>
+        <button class="window-control close" data-window-action="close" type="button" title="Close" aria-label="Close"></button>
+      </div>
+    </header>
     <main class="app-shell">
       <section class="focus-card">
         <header class="app-header">
@@ -77,7 +88,13 @@
         </section>
 
         <div class="progress-row">
-          <span id="goalText">目标 8 个番茄</span>
+          <div class="goal-editor">
+            <span id="goalText">目标 8 个番茄</span>
+            <div class="goal-stepper" aria-label="修改目标番茄">
+              <button id="goalMinusBtn" type="button" aria-label="减少目标番茄">-</button>
+              <button id="goalPlusBtn" type="button" aria-label="增加目标番茄">+</button>
+            </div>
+          </div>
           <span id="goalPercent">0%</span>
           <div class="progress-track">
             <div id="goalProgress" class="progress-fill"></div>

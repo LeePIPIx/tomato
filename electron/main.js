@@ -5,6 +5,7 @@ let mainWindow;
 let miniWindow;
 let normalBounds;
 let miniMode = false;
+const iconPath = path.join(__dirname, "..", "build", "icon.ico");
 let timerSnapshot = {
   time: "25:00",
   label: "专注时间"
@@ -17,6 +18,8 @@ function createWindow() {
     minWidth: 860,
     minHeight: 720,
     title: "Tomato Focus",
+    frame: false,
+    icon: iconPath,
     backgroundColor: "#f6f2ec",
     autoHideMenuBar: true,
     webPreferences: {
@@ -56,6 +59,7 @@ function enterMiniMode() {
     transparent: true,
     alwaysOnTop: true,
     skipTaskbar: true,
+    icon: iconPath,
     backgroundColor: "#00ffffff",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -101,6 +105,50 @@ ipcMain.handle("minimize-to-top", () => {
   }
 });
 
+ipcMain.handle("restore-from-mini", () => {
+  exitMiniMode();
+});
+
+ipcMain.handle("window-action", (event, action) => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+  if (!window) return false;
+
+  if (action === "minimize") {
+    window.minimize();
+    return true;
+  }
+
+  if (action === "maximize") {
+    window.isMaximized() ? window.unmaximize() : window.maximize();
+    return window.isMaximized();
+  }
+
+  if (action === "close") {
+    window.close();
+    return true;
+  }
+
+  return false;
+});
+
+ipcMain.handle("mini-drag-start", (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+  if (!window) return null;
+
+  return window.getPosition();
+});
+
+ipcMain.handle("mini-drag-move", (event, position) => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+  if (!window || !Array.isArray(position)) return false;
+
+  const [x, y] = position.map((value) => Math.round(Number(value)));
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
+
+  window.setPosition(x, y, false);
+  return true;
+});
+
 ipcMain.on("timer-snapshot", (_event, snapshot) => {
   timerSnapshot = {
     time: snapshot?.time || timerSnapshot.time,
@@ -112,6 +160,7 @@ ipcMain.on("timer-snapshot", (_event, snapshot) => {
 });
 
 app.whenReady().then(() => {
+  app.setAppUserModelId("com.tomato.focus");
   createWindow();
 
   app.on("activate", () => {
